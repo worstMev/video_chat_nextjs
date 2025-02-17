@@ -18,17 +18,20 @@ export default function Page() {
         });
 
         peer.on('call',async (call) => {
-            //const getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
             try{
                 const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-                my_video_ref.current.srcObject = mediaStream;
-                my_video_ref.current.play();
-                call.answer(mediaStream)
-                call.on('stream', function(remoteStream) {
-                    remote_video_ref.current.srcObject = remoteStream
-                    remote_video_ref.current.play();
-                });
+                if ( my_video_ref.current ){
+                    my_video_ref.current.srcObject = mediaStream;
+                    my_video_ref.current.play();
+                    call.answer(mediaStream)
+                    call.on('stream', function(remoteStream) {
+                        if ( remote_video_ref.current ){
+                            remote_video_ref.current.srcObject = remoteStream
+                            remote_video_ref.current.play();
+                        }
+                    });
+                }
 
             }catch(err){
                 console.log('error in peer.on(call):',err);
@@ -39,26 +42,29 @@ export default function Page() {
     }, []);
     
     const call = async (remotePeerId) => {
-        //const getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
     
 
         try{
             const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-            my_video_ref.current.srcObject = mediaStream;
-            my_video_ref.current.play();
-            const call = peer_instance.current.call(remotePeerId, mediaStream)
+            if ( my_video_ref.current ) {
+                my_video_ref.current.srcObject = mediaStream;
+                my_video_ref.current.play();
+                const call = peer_instance.current.call(remotePeerId, mediaStream)
 
-            call.on('stream', (remoteStream) => {
-                remote_video_ref.current.srcObject = remoteStream
-                remote_video_ref.current.play();
-            });
+                call.on('stream', (remoteStream) => {
+                    if( remote_video_ref.current ){
+                        remote_video_ref.current.srcObject = remoteStream
+                        remote_video_ref.current.play();
+                    }
+                });
+            }
         }catch(err){
             console.log('error in call(remotePeerId):', err)
         }
 
     }
 
-    /*
+    /* TODO
     const callMany = (remote_peer_ids) => {
         let getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
