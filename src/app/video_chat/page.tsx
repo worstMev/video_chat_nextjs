@@ -6,9 +6,9 @@ export default function Page() {
     const [my_peer_id, set_my_peer_id] = useState(''); 
     const [remote_peer_id, set_remote_peer_id] = useState('');
 
-    const remote_video_ref = useRef(null);
-    const my_video_ref = useRef(null);
-    const peer_instance = useRef(null);
+    const remote_video_ref = useRef <HTMLVideoElement | null>(null);
+    const my_video_ref = useRef <HTMLVideoElement | null>(null);
+    const peer_instance = useRef <Peer | null>(null);
 
     useEffect(() => {
         const peer = new Peer();
