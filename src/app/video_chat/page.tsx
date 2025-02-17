@@ -13,11 +13,11 @@ export default function Page() {
     useEffect(() => {
         const peer = new Peer();
 
-        peer.on('open', (id) => {
+        peer.on('open', ( id : string ) => {
             set_my_peer_id(id)
         });
 
-        peer.on('call',async (call) => {
+        peer.on('call',async (call : MediaConnection ) => {
 
             try{
                 const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
@@ -25,7 +25,7 @@ export default function Page() {
                     my_video_ref.current.srcObject = mediaStream;
                     my_video_ref.current.play();
                     call.answer(mediaStream)
-                    call.on('stream', function(remoteStream) {
+                    call.on('stream', function( remoteStream : MediaStream) {
                         if ( remote_video_ref.current ){
                             remote_video_ref.current.srcObject = remoteStream
                             remote_video_ref.current.play();
@@ -41,7 +41,7 @@ export default function Page() {
         peer_instance.current = peer;
     }, []);
     
-    const call = async (remotePeerId) => {
+    const call = async (remotePeerId : string ) => {
     
 
         try{
@@ -51,7 +51,7 @@ export default function Page() {
                 my_video_ref.current.play();
                 const call = peer_instance.current.call(remotePeerId, mediaStream)
 
-                call.on('stream', (remoteStream) => {
+                call.on('stream', ( remoteStream : MediaStream ) => {
                     if( remote_video_ref.current ){
                         remote_video_ref.current.srcObject = remoteStream
                         remote_video_ref.current.play();
