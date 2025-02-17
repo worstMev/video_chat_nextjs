@@ -17,10 +17,11 @@ export default function Page() {
             set_my_peer_id(id)
         });
 
-        peer.on('call', (call) => {
-            const getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+        peer.on('call',async (call) => {
+            //const getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
-            getUserMedia({ video: true, audio: true }, (mediaStream) => {
+            try{
+                const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
                 my_video_ref.current.srcObject = mediaStream;
                 my_video_ref.current.play();
                 call.answer(mediaStream)
@@ -28,26 +29,33 @@ export default function Page() {
                     remote_video_ref.current.srcObject = remoteStream
                     remote_video_ref.current.play();
                 });
-            });
+
+            }catch(err){
+                console.log('error in peer.on(call):',err);
+            }
+
         })
         peer_instance.current = peer;
     }, []);
     
-    const call = (remotePeerId) => {
-        const getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+    const call = async (remotePeerId) => {
+        //const getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+    
 
-        getUserMedia({ video: true, audio: true }, (mediaStream) => {
-
+        try{
+            const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
             my_video_ref.current.srcObject = mediaStream;
             my_video_ref.current.play();
-
             const call = peer_instance.current.call(remotePeerId, mediaStream)
 
             call.on('stream', (remoteStream) => {
                 remote_video_ref.current.srcObject = remoteStream
                 remote_video_ref.current.play();
             });
-        });
+        }catch(err){
+            console.log('error in call(remotePeerId):', err)
+        }
+
     }
 
     /*
@@ -81,11 +89,10 @@ export default function Page() {
             <input type="text" value={remote_peer_id} onChange={e => set_remote_peer_id(e.target.value)} />
             <button onClick={() => call(remote_peer_id)}>Call</button>
             <div>
-            <video ref={my_video_ref} />
+                <video ref={my_video_ref} />
             </div>
-            <div className={styles.remote_vids}>
-
-            <video ref={remote_video_ref} />
+            <div>
+                <video ref={remote_video_ref} />
             </div>
         </div>
     );
