@@ -18,7 +18,7 @@ export default function Page() {
         });
 
         peer.on('call', (call) => {
-            let getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+            const getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
             getUserMedia({ video: true, audio: true }, (mediaStream) => {
                 my_video_ref.current.srcObject = mediaStream;
@@ -34,7 +34,7 @@ export default function Page() {
     }, []);
     
     const call = (remotePeerId) => {
-        let getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+        const getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
         getUserMedia({ video: true, audio: true }, (mediaStream) => {
 
@@ -50,6 +50,7 @@ export default function Page() {
         });
     }
 
+    /*
     const callMany = (remote_peer_ids) => {
         let getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
@@ -71,6 +72,7 @@ export default function Page() {
 
         });
     }
+    */
 
     return(
         <div>
